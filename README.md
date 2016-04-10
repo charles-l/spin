@@ -6,6 +6,8 @@ Simple UTF-8 console spinners for C.
 
 ## usage
 
+Drop `spin.h` into your project directory.
+
 ```c
 #include "spin.h"
 int func() {
