@@ -4,7 +4,7 @@
 const int big_number = 1000000000;
 
 int main(void) {
-    spinner *s = spin_new(pat1, "Working");
+    spinner *s = spin_new(utf8_pat1, "Working", UTF8_CHAR_WIDTH);
     int x = 0;
     int working = 1;
     while(working) {

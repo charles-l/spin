@@ -11,7 +11,7 @@ Drop `spin.h` into your project directory.
 ```c
 #include "spin.h"
 int func() {
-    spinner *s = spin_new(pat1, "Working...");
+    spinner *s = spin_new(utf8_pat1, "Working...", UTF8_CHAR_WIDTH);
     while(working) {
         // ... do work ...
         spin_drw(s);

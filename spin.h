@@ -5,20 +5,26 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#define UTF8_CHAR_WIDTH 3
 
 // if you want to add new patterns, put them here (make sure they're utf8)
-const char pat1[] = "⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏";
-const char pat2[] = "⠋⠙⠚⠞⠖⠦⠴⠲⠳⠓";
-const char pat3[] = "⠄⠆⠇⠋⠙⠸⠰⠠⠰⠸⠙⠋⠇⠆";
-const char pat4[] = "⠋⠙⠚⠒⠂⠂⠒⠲⠴⠦⠖⠒⠐⠐⠒⠓⠋";
-const char pat5[] = "⠁⠉⠙⠚⠒⠂⠂⠒⠲⠴⠤⠄⠄⠤⠴⠲⠒⠂⠂⠒⠚⠙⠉⠁";
-const char pat6[] = "⠈⠉⠋⠓⠒⠐⠐⠒⠖⠦⠤⠠⠠⠤⠦⠖⠒⠐⠐⠒⠓⠋⠉⠈";
-const char pat7[] = "⠁⠁⠉⠙⠚⠒⠂⠂⠒⠲⠴⠤⠄⠄⠤⠠⠠⠤⠦⠖⠒⠐⠐⠒⠓⠋⠉⠈⠈";
+const char utf8_pat1[]  = "⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏";
+const char utf8_pat2[]  = "⠋⠙⠚⠞⠖⠦⠴⠲⠳⠓";
+const char utf8_pat3[]  = "⠄⠆⠇⠋⠙⠸⠰⠠⠰⠸⠙⠋⠇⠆";
+const char utf8_pat4[]  = "⠋⠙⠚⠒⠂⠂⠒⠲⠴⠦⠖⠒⠐⠐⠒⠓⠋";
+const char utf8_pat5[]  = "⠁⠉⠙⠚⠒⠂⠂⠒⠲⠴⠤⠄⠄⠤⠴⠲⠒⠂⠂⠒⠚⠙⠉⠁";
+const char utf8_pat6[]  = "⠈⠉⠋⠓⠒⠐⠐⠒⠖⠦⠤⠠⠠⠤⠦⠖⠒⠐⠐⠒⠓⠋⠉⠈";
+const char utf8_pat7[]  = "⠁⠁⠉⠙⠚⠒⠂⠂⠒⠲⠴⠤⠄⠄⠤⠠⠠⠤⠦⠖⠒⠐⠐⠒⠓⠋⠉⠈⠈";
+const char ascii_pat1[] = ".oOo.";
+const char ascii_pat2[] = "x+ ";
+const char ascii_pat3[] = ".  ";
+const char ascii_pat4[] = "-= ";
 
 typedef struct spinner {
     const char *c;
     const char *pat;
     char *msg;
+    int charwidth;
 } spinner;
 
 #define CSI "\e["
@@ -27,11 +33,12 @@ static void showcur(int show) {
     show ? fputs(CSI "?25h", stdout) : fputs(CSI "?25l", stdout);
 }
 
-spinner *spin_new(const char *pat, char *msg) {
+spinner *spin_new(const char *pat, char *msg, int charwidth) {
     spinner *s = malloc(sizeof(spinner));
     s->pat = pat;
     s->c = s->pat;
     s->msg = msg;
+    s->charwidth = charwidth;
     showcur(0);
     return s;
 }
@@ -45,8 +52,9 @@ void spin_clr(spinner *s) {
 void spin_drw(spinner *s) {
     spin_clr(s);
     printf("%s ", s->msg);
-    printf("%c%c%c", s->c[0], s->c[1], s->c[2]);
-    if((s->c += 3)[1] == '\0') s->c = s->pat;
+    for(int i = 0; i < s->charwidth; i++)
+        putchar(s->c[i]);
+    if((s->c += s->charwidth)[1] == '\0') s->c = s->pat;
 }
 
 void spin_upd_msg(spinner *s, char *msg) {
