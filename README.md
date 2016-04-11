@@ -15,8 +15,10 @@ int func() {
     while(working) {
         // ... do work ...
         spin_drw(s);
+        if(progress == .5)
+            spin_upd_msg(s, "Half way through...") // update the message
     }
-    spin_clr(s);
+    spin_del(s);
     return 0;
 }
 ```
