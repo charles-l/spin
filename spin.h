@@ -6,6 +6,7 @@
 #include <string.h>
 #include <unistd.h>
 
+// if you want to add new patterns, put them here (make sure they're utf8)
 const char pat1[] = "⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏";
 const char pat2[] = "⠋⠙⠚⠞⠖⠦⠴⠲⠳⠓";
 const char pat3[] = "⠄⠆⠇⠋⠙⠸⠰⠠⠰⠸⠙⠋⠇⠆";
@@ -35,23 +36,26 @@ spinner *spin_new(const char *pat, char *msg) {
     return s;
 }
 
-void spin_drw(spinner *s) {
+void spin_clr(spinner *s) {
     fflush(stdout);
     for(int i = strlen(s->msg) + 2; i > 0; i--)
-        putchar('\b');
+        printf("\b \b");
+}
+
+void spin_drw(spinner *s) {
+    spin_clr(s);
     printf("%s ", s->msg);
     printf("%c%c%c", s->c[0], s->c[1], s->c[2]);
     if((s->c += 3)[1] == '\0') s->c = s->pat;
 }
 
-void spin_drw_msg(spinner *s, char *msg) {
-    spin_drw(s);
+void spin_upd_msg(spinner *s, char *msg) {
+    spin_clr(s);
     s->msg = msg;
 }
 
-void spin_clr(spinner *s) {
-    for(int i = strlen(s->msg) + 2; i > 0; i--)
-        printf("\b \b");
+void spin_del(spinner *s) {
+    spin_clr(s);
     showcur(1);
     free(s);
 }
